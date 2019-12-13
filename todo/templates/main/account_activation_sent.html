@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block container %} 
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+    <ul class="navbar-nav ml-auto">
+    </ul>
+</nav> 
+
+<div class="container-fluid">
+    <div class="text-center">
+        <h1 class="text-gray-800 mb-5">Email Sent...</h1>
+        <p class="text-gray-500 mb-0">Please Check your email to activate your account</p>
+        <a href="{% url 'login' %}">&larr; Go to Login</a>
+    </div>
+</div>
+
+{% endblock container  %}

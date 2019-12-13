@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -56,6 +57,8 @@ class Person(AbstractBaseUser):
     password = models.CharField(max_length=100,null=True,blank=True,default="")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     objects = PersonManager()
 
@@ -84,6 +87,8 @@ class Person(AbstractBaseUser):
 
 class Category(models.Model):
     category_name = models.CharField(max_length=30)
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
     person = models.ForeignKey(Person,on_delete=models.CASCADE)
 
     def __str__(self):
@@ -94,6 +99,8 @@ class Category(models.Model):
 class List(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
 
 
