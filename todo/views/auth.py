@@ -1,14 +1,13 @@
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.views.generic import TemplateView
 from django.shortcuts import render,redirect
 from django.utils.encoding import force_bytes,force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string, get_template
 
-from django.template import Context
-from django.http import HttpResponse,HttpResponseForbidden
-from django.core.exceptions import PermissionDenied
+from django.template.loader import get_template
+from django.urls import reverse
+from django.http import HttpResponse
 from django.core.mail import EmailMessage
 
 from todo.forms.signupForm import SignupForm
@@ -73,3 +72,25 @@ class ActivateView(TemplateView):
             return redirect('login')
         else:
             return render(request, 'account_activation_invalid.html')
+
+class LoginView(TemplateView):
+    template_name = "registration/login.html"
+    
+    def get(self, request):
+        if bool(request.user.is_authenticated):
+            return redirect("homepage")
+        else:
+            return render(request, self.template_name,{})
+
+        
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request,user)
+                return redirect('homepage')
+
+
+    

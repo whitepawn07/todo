@@ -2,6 +2,8 @@ from datetime import datetime
 from django.db import models
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth import get_user_model
+from django.conf import settings
 
 class PersonManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password):
@@ -89,16 +91,16 @@ class Category(models.Model):
     category_name = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
-    person = models.ForeignKey(Person,on_delete=models.CASCADE)
-
+    person = models.ForeignKey(Person ,on_delete=models.CASCADE)
+    
     def __str__(self):
         return "%s" % self.category_name
-
 
 
 class List(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
+    is_done = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)

@@ -33,9 +33,14 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('category_name', 'person', 'created_at',)
+
+class ListAdmin(admin.ModelAdmin):
+    list_display = ('title', 'description', 'category', 'is_done','created_at')
 
 # Now register the new UserAdmin...
 admin.site.register(Person, UserAdmin)
-admin.site.register(Category)
-admin.site.register(List)
+admin.site.register(Category,CategoryAdmin)
+admin.site.register(List, ListAdmin)
 admin.site.unregister(Group)

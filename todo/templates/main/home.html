@@ -24,21 +24,22 @@
                         <h3 class="m-0 font-weight-bold text-primary">Create List</h3>
                     </div>
                     <div class="card-body" id="create-list">
-                        <!-- <form method="post"> -->
+                        <form method="post" id="add-list-form" data-addlist-url="{% url 'add-list' %}">
                             <h3 class="small font-weight-bold">Add a list</h3>
                             {% csrf_token %}
                             <div class="form-group row">
                                 <div class="col-sm-12 mb-4 mb-sm-0">
-                                    {% if Category %}
-                                        {{ Category|length }}
-                                    {% else %}
-                                        <input type="text" class="form-control form-control-user add-todo" placeholder="Category">
-                                    {% endif %}
+                                    <input type="text" class="form-control form-control-user add-todo" placeholder="Category" name="{{categoryForm.category.name}}" id="{{categoryForm.category.id_for_label}}">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-12">
-                                    <input type="text" class="form-control form-control-user add-todo" placeholder="Description">
+                                    <input type="text" class="form-control form-control-user add-todo" placeholder="Title" name="{{form.title.name}}" id="{{form.title.id_for_label}}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control form-control-user add-todo" placeholder="Description" name="{{form.description.name}}" id="{{form.description.id_for_label}}">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -46,7 +47,7 @@
                                     <button class="btn btn-success btn-user btn-block" type="submit" id="add-to-list">Add</button>
                                 </div>
                             </div>
-                        <!-- </form> -->
+                        </form>
                     </div>
                 </div>
             </div>
@@ -58,28 +59,36 @@
                     </div>
                     <div class="card-body">
                         <!-- <h3 class="small font-weight-bold">Add a list</h3>  -->
-                        <div class="form-group row">
+                        <div class="form-group row" id="todo-list" >
                             <!-- Border Left Utilities -->
-                            <div class="col-md-12 mb-4">
-                                <div class="card border-left-primary shadow h-100 py-2">
-                                    <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                            {% if List.count %}
+                                {% for list in List %}
+                                {% if not list.is_done %}
+                                <div class="col-md-12 mb-4" id="list-{{list.id}}">
+                                    <div class="card border-left-primary shadow py-2">
+                                        <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-auto">
+                                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                            </div>
+                                            <div class="col mr-2 ml-4">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{list.category}} </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{list.description}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <form method="POST" class="update-list-form" >
+                                                    {% csrf_token %}
+                                                    <button class="border-0 btn-transition btn btn-outline-success update-list" data-id="{{list.id}}" data-updatelist-url="{% url 'update-list' %}" type="submit"> <i class="fa fa-check"></i></button>
+                                                    <button class="border-0 btn-transition btn btn-outline-danger delete-list" data-id="{{list.id}}" data-deletelist-url="{% url 'delete-list' %}" type="submit"> <i class="fa fa-trash"></i> </button>
+                                                </form>
+                                            </div>
                                         </div>
-                                        <div class="col mr-2 ml-4">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Category </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">description</div>
                                         </div>
-                                        <div class="col-auto">
-                                            <button class="border-0 btn-transition btn btn-outline-success"> <i class="fa fa-check"></i></button>
-                                            <button class="border-0 btn-transition btn btn-outline-danger"> <i class="fa fa-trash"></i> </button>
-
-                                        </div>
-                                    </div>
                                     </div>
                                 </div>
-                            </div>
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -92,26 +101,32 @@
                     <div class="card-header py-3">
                         <h3 class="m-0 font-weight-bold text-primary">Done</h3>
                     </div>
-                    <div class="card-body">
-                        <div class="col-md-12 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                        <div class="col mr-2 ml-4">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Category </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">description</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fa fa-check"></i>
-                                            <button class="border-0 btn-transition btn btn-outline-danger"> <i class="fa fa-trash"></i> </button>
+                    <div class="card-body" id="done-list">
+                    {% if List.count %}
+                        {% for list in List %}
+                            {% if list.is_done %}
+                            <div class="col-md-12 mb-4">
+                                <div class="card border-left-primary shadow  py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-auto">
+                                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                            </div>
+                                            <div class="col mr-2 ml-4">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Category </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">description</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa fa-check"></i>
+                                                <button class="border-0 btn-transition btn btn-outline-danger"> <i class="fa fa-trash"></i> </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                     </div>
                 </div>
             </div>
